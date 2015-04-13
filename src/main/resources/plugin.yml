@@ -1,0 +1,4 @@
+name: SyncIGTime
+description: Sync of the real time in game
+main: eu.carrade.amaury.SyncIGTime.SyncIGTime
+version: 0.1
