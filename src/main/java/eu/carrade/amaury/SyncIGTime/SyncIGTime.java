@@ -19,6 +19,7 @@ public class SyncIGTime extends JavaPlugin {
 
 		Set<World> worlds = new HashSet<>();
 		Boolean syncMoonPhase = getConfig().getBoolean("syncMoonPhases", true);
+		String timezone = getConfig().getString("timezone");
 
 		for(String worldName : getConfig().getStringList("worlds")) {
 			World world = getServer().getWorld(worldName);
@@ -35,7 +36,7 @@ public class SyncIGTime extends JavaPlugin {
 		}
 
 		updateTimeTask = getServer().getScheduler().runTaskTimerAsynchronously(
-				this, new UpdateTimeTask(worlds, syncMoonPhase), 1l, 60l
+				this, new UpdateTimeTask(worlds, syncMoonPhase, timezone), 1l, 60l
 		);
 
 	}

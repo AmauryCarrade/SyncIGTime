@@ -4,3 +4,6 @@ worlds:
 
 # Sync moon phases?
 syncMoonPhases: true
+
+# TimeZone? If invalid, GMT.
+timezone: "Europe/Paris"

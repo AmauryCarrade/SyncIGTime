@@ -16,7 +16,7 @@ public class UpdateTimeTask implements Runnable {
 	private final double ticksPerMinecraftDay = 24000d;
 
 	private Calendar thisDay6AM;
-	private TimeZone timezone = TimeZone.getTimeZone("Europe/Paris");
+	private TimeZone timezone;
 
 	private MoonPhase currentPhase;
 	private int currentDayOfYear;
@@ -25,14 +25,16 @@ public class UpdateTimeTask implements Runnable {
 	private Set<World> worlds = new HashSet<>();
 
 
-	public UpdateTimeTask(Set<World> worlds, boolean syncMoonPhase) {
+	public UpdateTimeTask(Set<World> worlds, boolean syncMoonPhase, String timezone) {
 
 		this.worlds.addAll(worlds);
 		this.syncMoonPhase = syncMoonPhase;
 
-		Calendar now = Calendar.getInstance(timezone);
+		this.timezone = TimeZone.getTimeZone(timezone);
 
-		thisDay6AM = Calendar.getInstance(timezone);
+		Calendar now = Calendar.getInstance(this.timezone);
+
+		thisDay6AM = Calendar.getInstance(this.timezone);
 		thisDay6AM.set(now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DAY_OF_MONTH), 6, 0, 0);
 
 		if(syncMoonPhase) {
