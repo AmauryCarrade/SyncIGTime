@@ -1,0 +1,6 @@
+# The time will be synced in these worlds, if they are normal ones (not Nether or End ones).
+worlds:
+  - world
+
+# Sync moon phases?
+syncMoonPhases: true

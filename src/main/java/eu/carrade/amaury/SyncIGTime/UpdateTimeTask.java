@@ -2,10 +2,11 @@ package eu.carrade.amaury.SyncIGTime;
 
 import eu.carrade.amaury.SyncIGTime.moon.MoonPhase;
 import eu.carrade.amaury.SyncIGTime.moon.MoonPhaseCalculator;
-import org.bukkit.Bukkit;
 import org.bukkit.World;
 
 import java.util.Calendar;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.TimeZone;
 
 
@@ -20,15 +21,24 @@ public class UpdateTimeTask implements Runnable {
 	private MoonPhase currentPhase;
 	private int currentDayOfYear;
 
+	private boolean syncMoonPhase;
+	private Set<World> worlds = new HashSet<>();
 
-	public UpdateTimeTask() {
+
+	public UpdateTimeTask(Set<World> worlds, boolean syncMoonPhase) {
+
+		this.worlds.addAll(worlds);
+		this.syncMoonPhase = syncMoonPhase;
+
 		Calendar now = Calendar.getInstance(timezone);
 
 		thisDay6AM = Calendar.getInstance(timezone);
 		thisDay6AM.set(now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DAY_OF_MONTH), 6, 0, 0);
 
-		currentPhase = MoonPhaseCalculator.moonPhase(now);
-		currentDayOfYear = now.get(Calendar.DAY_OF_YEAR);
+		if(syncMoonPhase) {
+			currentPhase = MoonPhaseCalculator.moonPhase(now);
+			currentDayOfYear = now.get(Calendar.DAY_OF_YEAR);
+		}
 	}
 
 
@@ -37,7 +47,7 @@ public class UpdateTimeTask implements Runnable {
 		Calendar now = Calendar.getInstance(timezone);
 
 		// New day... new phase?
-		if(now.get(Calendar.DAY_OF_YEAR) != currentDayOfYear) {
+		if(syncMoonPhase && now.get(Calendar.DAY_OF_YEAR) != currentDayOfYear) {
 			currentPhase = MoonPhaseCalculator.moonPhase(now);
 			currentDayOfYear = now.get(Calendar.DAY_OF_YEAR);
 		}
@@ -49,16 +59,14 @@ public class UpdateTimeTask implements Runnable {
 		if(inGameTime < 0) inGameTime += (long) ticksPerMinecraftDay;
 
 		// Moon phase
-		inGameTime += currentPhase.getTicksToGetThisPhase();
+		if(syncMoonPhase) {
+			inGameTime += currentPhase.getTicksToGetThisPhase();
+		}
 
 
-		synchronized (Bukkit.getServer().getWorlds()) {
-			for(World world : Bukkit.getServer().getWorlds()) {
-				synchronized (world) {
-					if (world.getEnvironment() == World.Environment.NORMAL) {
-						world.setFullTime(inGameTime);
-					}
-				}
+		for(World world : worlds) {
+			synchronized (world) {
+				world.setFullTime(inGameTime);
 			}
 		}
 	}
