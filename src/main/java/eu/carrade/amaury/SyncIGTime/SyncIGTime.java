@@ -35,7 +35,7 @@ public class SyncIGTime extends JavaPlugin {
 			world.setGameRuleValue("doDaylightCycle", "false");
 		}
 
-		updateTimeTask = getServer().getScheduler().runTaskTimerAsynchronously(
+		updateTimeTask = getServer().getScheduler().runTaskTimer(
 				this, new UpdateTimeTask(worlds, syncMoonPhase, timezone), 1l, 60l
 		);
 
