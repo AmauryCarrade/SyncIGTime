@@ -67,9 +67,7 @@ public class UpdateTimeTask implements Runnable {
 
 
 		for(World world : worlds) {
-			synchronized (world) {
-				world.setFullTime(inGameTime);
-			}
+			world.setFullTime(inGameTime);
 		}
 	}
 }
